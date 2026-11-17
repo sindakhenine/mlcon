@@ -19,7 +19,13 @@ function voted(pollId: string): string | null {
  * always sees it, with a note when it is closed for the audience. Also shows the
  * live vote for this session and passes the spotlight mission down.
  */
-export function PlayArea({ session, children }: { session: "s1" | "s2"; children: (spotlight: string) => ReactNode }) {
+export function PlayArea({
+  session,
+  children,
+}: {
+  session: "s1" | "s2";
+  children: (ctx: { spotlight: string; liveAI: boolean }) => ReactNode;
+}) {
   const state = useSiteState();
   const poll = state?.poll ? pollById(state.poll) : undefined;
   const showPoll = poll && poll.session === session;
@@ -44,7 +50,7 @@ export function PlayArea({ session, children }: { session: "s1" | "s2"; children
         </p>
       )}
       {showPoll && <PollCard key={poll.id} pollId={poll.id} />}
-      {children(state?.spotlight ?? "")}
+      {children({ spotlight: state?.spotlight ?? "", liveAI: Boolean(state?.liveAI) })}
     </div>
   );
 }

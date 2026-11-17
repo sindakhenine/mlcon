@@ -11,6 +11,7 @@
     "golden": "python3 ../companion-code/export_traces.py"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
     "@noble/hashes": "^2.4.0",
     "@upstash/redis": "^1.41.0",
     "framer-motion": "^14.14.0",

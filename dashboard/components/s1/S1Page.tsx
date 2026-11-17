@@ -93,7 +93,7 @@ export function S1Page() {
           onJump={(run, stepId) => go(run, stepIndex(run, stepId))}
         />
       )}
-      {view === "play" && <PlayArea session="s1">{(spotlight) => <S1Lab key={key} spotlight={spotlight} />}</PlayArea>}
+      {view === "play" && <PlayArea session="s1">{(ctx) => <S1Lab key={key} spotlight={ctx.spotlight} liveAI={ctx.liveAI} />}</PlayArea>}
     </div>
   );
 }

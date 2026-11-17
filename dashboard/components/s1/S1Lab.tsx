@@ -22,11 +22,12 @@ import { Card, Missions, Segmented, SimBanner, Toggle } from "../play/Controls";
 import { ChatPanel } from "../story/ChatPanel";
 import { ManifestView } from "../story/ManifestView";
 import { Chip } from "../story/FileCard";
+import { LiveAnswer } from "../play/LivePanels";
 
 const BASE_IDS = new Set(INDEX.map((d) => d.id));
 
 /** Session 1 Play: switch stages off, edit documents, and watch the answer change. */
-export function S1Lab({ spotlight = "" }: { spotlight?: string }) {
+export function S1Lab({ spotlight = "", liveAI = false }: { spotlight?: string; liveAI?: boolean }) {
   const lab = useLab("mlcon-play-s1", defaultInput, runLab, S1_MISSIONS);
   const { input, output, update } = lab;
   const a = output.answer;
@@ -226,6 +227,7 @@ export function S1Lab({ spotlight = "" }: { spotlight?: string }) {
             {a.correct ? "✓ Correct answer" : "✗ Wrong answer"}
             {a.leak ? " · staff-only rule leaked" : ""}
           </p>
+          {liveAI && <LiveAnswer input={input} />}
 
           <Card title={`What happened to each document · top ${output.k}`}>
             <ul className="space-y-1.5">

@@ -536,11 +536,11 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [x] `/stage/s1` and `/stage/s2` projector pages (QR + live counters)
 
 ### Phase 8: Live Claude
-- [ ] Load the `claude-api` skill, read the TypeScript docs
-- [ ] `/api/live/s1-answer` streamed answer from the assembled context
-- [ ] `/api/live/s2-agent` loop with the gateway deciding every tool call
-- [ ] Rate limits, access code check, spend cap, input length limits
-- [ ] Cost test: 20 runs each, write cost per run in the build log, Sinda decides Opus 5.5 or Haiku 5.5
+- [x] Load the `claude-api` skill, read the TypeScript docs
+- [x] `/api/live/s1-answer` streamed answer from the assembled context
+- [x] `/api/live/s2-agent` loop with the gateway deciding every tool call
+- [x] Rate limits, access code check, spend cap, input length limits
+- [ ] Cost test: 20 runs each, write cost per run in the build log, Sinda decides Opus 5.5 or Haiku 5.5 (needs the API key; Sinda adds it 2026-11-19)
 
 ### Phase 9: Polish and rehearsal
 - [ ] Add QR codes to the end slides of both decks (`_build/session1.js`, `session2.js`, then rebuild)
@@ -569,6 +569,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Phase 7 code done. Three keys (`lib/gate.ts`): owner (`SITE_ACCESS_CODE`, always in), audience (code set in admin, works only while Site open; case-insensitive; rotating or closing locks them out), admin (`ADMIN_PASSWORD`, 12 h cookie). `proxy.ts` passes the role to the app as `x-mlcon-role` (overwritten, so it cannot be faked). Store `lib/store.ts`: Upstash Redis if `KV_REST_API_URL/TOKEN` exist, memory in local dev, otherwise everything closed. Admin `/admin`: Site open, Play open, Live AI (no effect until phase 8), audience code (save/new), live vote (5 polls in `lib/polls.ts`), spotlight mission, limits, kill switch, reset, live numbers, attack log. Audience: Play shows 'opens during the talk' until Play open; live vote card; spotlight banner. Counters: missions once per visitor, red team attempts/blocked, visitors in 5 min. Stage pages `/stage/s1`, `/stage/s2`: QR to `/sN?view=play`, code, counters, vote bars (owner/admin only). Tested end to end with test passwords: `tests/e2e_access.py`, 19/19 pass. Waiting for Sinda: `ADMIN_PASSWORD` secret and Upstash Redis in Vercel.
 - 2026-11-18: Sinda set `ADMIN_PASSWORD` (Secret) and connected Upstash Redis (free plan: 500,000 commands a month, Frankfurt; Vercel added KV_* and REDIS_URL). Made the site light on the database: phones poll every 8 s and are counted once a minute, admin and stage poll every 5 s, config cached 5 s, 'seen' is one command. Estimate: about 25,000 commands per 45-minute talk with 200 phones. e2e test still 19/19.
 - 2026-11-18: Sinda logged in to the live `/admin`: private code, admin password and database (redis) all show as set. Phase 7 complete. Next: phase 8 (live Claude) or phase 5 (stage mode).
+- 2026-11-18: Phase 8 code done, waiting for the key. Routes `/api/live/s1` (streams Claude's answer to the context the engine rebuilt on the server; browser text is never trusted, see `lib/liveInput.ts`) and `/api/live/s2` (manual agent loop in `lib/s2/liveAgent.ts`: Claude proposes, the same gateway decides, fake systems answer; strict tools; server caps 10 model turns and 14 tool calls even with Bound off; refusal stops the run). Guard `lib/live.ts`: site role + `ANTHROPIC_API_KEY` + Live AI switch + daily cap (crossing it turns Live AI off) + runs per person per day (owner 200). Model from `CLAUDE_MODEL`, default `claude-opus-5-5`, effort low, server-side refusal fallback (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`) on models that support it. Cost estimated from `usage`. Buttons 'Ask real Claude with this context' (S1) and 'Run this ticket with real Claude' (S2) appear only while Live AI is on. Admin shows key status, model, today's spend and runs. Tests: `tests/live.test.ts` runs the loop with a stand-in model (37 unit tests total); `tests/e2e_live.py` checks the guard with no key and with a fake key (error path reaches the API and comes back as a friendly message). Not yet verified: a real model call (needs the key).
 
 ---
 

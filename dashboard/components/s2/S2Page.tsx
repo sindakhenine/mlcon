@@ -83,7 +83,7 @@ export function S2Page() {
         <S2Story key={key} run="gated" initial={initial} onPrevView={back} nextView={nextOf("Path check", "path")} />
       )}
       {view === "path" && <S2Path key={key} initial={initial} onPrevView={back} nextView={nextOf("Play", "play")} />}
-      {view === "play" && <PlayArea session="s2">{(spotlight) => <S2Lab key={key} spotlight={spotlight} />}</PlayArea>}
+      {view === "play" && <PlayArea session="s2">{(ctx) => <S2Lab key={key} spotlight={ctx.spotlight} liveAI={ctx.liveAI} />}</PlayArea>}
     </div>
   );
 }

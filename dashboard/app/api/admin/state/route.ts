@@ -5,6 +5,7 @@ import { isAdmin, json } from "@/lib/http";
 import { DEFAULT_CONFIG, getConfig, setConfig, storeStatus, type SiteConfig } from "@/lib/store";
 import { readAttacks, readStats, resetStats } from "@/lib/stats";
 import { POLLS } from "@/lib/polls";
+import { readAiToday } from "@/lib/live";
 import { S1_MISSIONS } from "@/lib/s1/lab";
 import { S2_MISSIONS } from "@/lib/s2/lab";
 
@@ -17,11 +18,12 @@ function newAudienceCode() {
 
 export async function GET(request: NextRequest) {
   if (!isAdmin(request)) return json({ error: "admin login needed" }, 401);
-  const [config, stats, attacks] = await Promise.all([getConfig(true), readStats(), readAttacks()]);
+  const [config, stats, attacks, ai] = await Promise.all([getConfig(true), readStats(), readAttacks(), readAiToday()]);
   return json({
     config,
     stats,
     attacks,
+    ai,
     setup: { database: storeStatus(), ownerCode: gateConfigured(), adminPassword: adminConfigured() },
     polls: POLLS,
     missions: [...S1_MISSIONS, ...S2_MISSIONS].map((m) => ({ id: m.id, title: m.title })),

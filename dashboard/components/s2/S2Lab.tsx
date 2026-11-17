@@ -7,11 +7,12 @@ import { Card, Missions, SimBanner, Toggle } from "../play/Controls";
 import { MoneyCounter } from "../story/MoneyCounter";
 import { useEffect, useRef } from "react";
 import { track } from "@/lib/useSiteState";
+import { LiveRun } from "../play/LivePanels";
 
 const OFF: Record<Control, boolean> = { bound: false, authorize: false, contain: false, gate: false, hardCap: false };
 
 /** Session 2 Play: write an attack ticket, switch gateway controls off, see what gets paid. */
-export function S2Lab({ spotlight = "" }: { spotlight?: string }) {
+export function S2Lab({ spotlight = "", liveAI = false }: { spotlight?: string; liveAI?: boolean }) {
   const lab = useLab("mlcon-play-s2", defaultRedInput, runRed, S2_MISSIONS);
   const { input, output, update } = lab;
 
@@ -121,7 +122,8 @@ export function S2Lab({ spotlight = "" }: { spotlight?: string }) {
         </div>
 
         <div id="red-result" className="flex min-w-0 scroll-mt-4 flex-col gap-4 lg:sticky lg:top-4 lg:self-start">
-          <MoneyCounter value={output.paid} safe label="paid without a human" />
+          {liveAI && <LiveRun input={input} />}
+          <MoneyCounter value={output.paid} safe label="paid without a human (simulated agent)" />
           <div className="grid grid-cols-3 gap-2 text-center">
             <Stat n={output.waiting} label="waiting for a human" tone="warn" />
             <Stat n={output.blocked} label="denied by the gateway" tone="fix" />

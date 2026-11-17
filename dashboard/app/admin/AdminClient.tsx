@@ -16,6 +16,7 @@ interface AdminState {
   setup: { database: "redis" | "memory" | "none"; ownerCode: boolean; adminPassword: boolean };
   polls: Poll[];
   missions: { id: string; title: string }[];
+  ai: { usd: number; runs: number; model: string; keySet: boolean };
 }
 
 /** The admin page: switches, codes, votes, counters. Refreshes every 5 seconds. */
@@ -93,10 +94,26 @@ export function AdminClient() {
         </p>
       )}
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Setup ok={setup.ownerCode} label="Your private code" />
         <Setup ok={setup.adminPassword} label="Admin password" />
         <Setup ok={setup.database !== "none"} label={`Database (${setup.database})`} />
+        <Setup ok={state.ai.keySet} label="Claude API key" />
+      </section>
+
+      <section className="rounded-2xl border border-line bg-surface p-5">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Live AI today</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Num n={Number(state.ai.usd.toFixed(2))} label={`USD spent (cap ${c.dailyCapUsd})`} />
+          <Num n={state.ai.runs} label="live runs" />
+          <div className="col-span-2 rounded-xl bg-bg px-4 py-3">
+            <p className="font-mono text-lg font-bold">{state.ai.model}</p>
+            <p className="text-xs text-muted">
+              Model (Vercel variable CLAUDE_MODEL; default claude-opus-5-5, cheaper: claude-haiku-5-5). When the cap is reached,
+              Live AI switches itself off.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-line bg-surface p-5">
@@ -104,7 +121,7 @@ export function AdminClient() {
         <div className="grid gap-2 md:grid-cols-3">
           <Toggle label="Site open" does="Audience can enter with the code below." on={c.siteOpen} onChange={(v) => send({ siteOpen: v })} />
           <Toggle label="Play open" does="Audience can use the Play tabs." on={c.playOpen} onChange={(v) => send({ playOpen: v })} />
-          <Toggle label="Live AI" does="Real Claude in Play (phase 8, not built yet)." on={c.liveAI} onChange={(v) => send({ liveAI: v })} />
+          <Toggle label="Live AI" does="Real Claude in Play. Uses your API key, within the limits below." on={c.liveAI} onChange={(v) => send({ liveAI: v })} />
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <button
@@ -191,7 +208,7 @@ export function AdminClient() {
           </label>
           <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
             <label>
-              Live AI calls per visitor per day
+              Live AI runs per person per day
               <input
                 type="number"
                 min={0}
