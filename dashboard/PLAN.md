@@ -21,7 +21,7 @@ Owner: Sinda Khenine. Written 2026-11-17. This file is the single source of trut
 | Slides | `Session_1_Context_Engineering_FINAL.pptx` (21 slides), `Session_2_From_Answering_to_Acting_FINAL.pptx` (24 slides) |
 | Speaker script | `Speech_Script_Slide_by_Slide_FINAL.docx`, source in `_build/scripts.py` |
 | Stack | Next.js (App Router) + TypeScript + Tailwind + Framer Motion, hosted on Vercel, Upstash Redis for admin state, Anthropic TypeScript SDK on the server only |
-| Repo | Public GitHub repo (name to decide, suggestion: `context-to-action`), containing `companion-code/` and `dashboard/` |
+| Repo | https://github.com/sindakhenine/mlcon (public, branch `main`). Git root is the "mlcon berlin " folder; the root `.gitignore` only lets `companion-code/`, `dashboard/` and `README.md` in. Slides and scripts stay local. |
 | Secrets (never in git) | `ANTHROPIC_API_KEY`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` |
 | Writing rules | Simple English. No em dashes anywhere in the UI. One idea per screen. Acme Home is fictional, no real company names in the app. |
 
@@ -480,7 +480,7 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 ### Phase 0: Setup
 - [x] Create `dashboard/` Next.js app (TypeScript, App Router, Tailwind, ESLint)
 - [x] Add fonts (Inter, JetBrains Mono) and color tokens (navy, red, green, greys; dark and light)
-- [ ] Create public GitHub repo, push `companion-code/` and `dashboard/` (no secrets, add `.env.example`)
+- [x] Create public GitHub repo, push `companion-code/` and `dashboard/` (no secrets; `.env.example` comes with phase 7)
 - [ ] Connect repo to Vercel, first deploy works
 - [ ] Write the live URL into section 0 of this plan
 
@@ -556,6 +556,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-17: Plan written.
 - 2026-11-17: Phase 0 (part): Next.js 16.4 app created in `dashboard/` with Tailwind 4, Inter + JetBrains Mono, dark/light color tokens in `app/globals.css`, home page with two session tiles. Dev server: `.claude/launch.json` config "dashboard", port 3100. Root `.gitignore` keeps only `companion-code/` and `dashboard/` for the public repo. Not done: GitHub repo and Vercel (waiting for Sinda's OK to publish).
 - 2026-11-17: Phase 1 done. Demo scripts now run their printing under `if __name__ == "__main__"` (output unchanged, checked with diff) so `export_traces.py` can import them. `npm run golden` regenerates `fixtures/golden/*.json`; `npm test` runs 11 tests, all pass, including the idempotency key `da461cfee31c`. Engines: `lib/s1/engine.ts`, `lib/s2/gateway.ts` (gateway takes optional `Controls` so Play mode can switch checks off). Traces: `lib/s1/trace.ts`, `lib/s2/trace.ts`; `gatewayChecks()` gives the per-check list for the gateway animation and is tested against `authorize()`. Temporary text views at `/s1` and `/s2` show the traces; phase 2 replaces them.
+- 2026-11-17: Repo pushed to https://github.com/sindakhenine/mlcon (first commit 8919fcd). Next: connect Vercel (Sinda logs in at vercel.com, imports the repo, Root Directory = `dashboard`), then phase 2.
 
 ---
 
