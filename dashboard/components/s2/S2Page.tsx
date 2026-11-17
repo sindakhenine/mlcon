@@ -6,12 +6,14 @@ import { setSearch, useSearch } from "@/lib/useSearch";
 import { S2Story } from "./S2Story";
 import { S2Failures } from "./S2Failures";
 import { S2Path } from "./S2Path";
+import { S2Lab } from "./S2Lab";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
   { id: "failures", label: "Four failures" },
   { id: "gated", label: "Through the gateway" },
   { id: "path", label: "Path check" },
+  { id: "play", label: "Play" },
 ] as const;
 type View = (typeof VIEWS)[number]["id"];
 
@@ -62,12 +64,6 @@ export function S2Page() {
             {v.label}
           </button>
         ))}
-        <span
-          className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-dashed border-line px-4 py-2 text-sm text-muted/60"
-          title="Coming soon"
-        >
-          <span className="font-mono text-xs">5</span> Play (soon)
-        </span>
       </nav>
 
       {view === "broken" && (
@@ -85,7 +81,8 @@ export function S2Page() {
       {view === "gated" && (
         <S2Story key={key} run="gated" initial={initial} onPrevView={back} nextView={nextOf("Path check", "path")} />
       )}
-      {view === "path" && <S2Path key={key} initial={initial} onPrevView={back} />}
+      {view === "path" && <S2Path key={key} initial={initial} onPrevView={back} nextView={nextOf("Play", "play")} />}
+      {view === "play" && <S2Lab key={key} />}
     </div>
   );
 }

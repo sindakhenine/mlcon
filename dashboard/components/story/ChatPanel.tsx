@@ -19,9 +19,23 @@ export interface ChatMessage {
 }
 
 /** Phone-shaped chat. The last message can type itself; marks appear when typing ends. */
-export function ChatPanel({ messages, title = "Acme Home support", thinking = false }: { messages: ChatMessage[]; title?: string; thinking?: boolean }) {
+export function ChatPanel({
+  messages,
+  title = "Acme Home support",
+  thinking = false,
+  compact = false,
+}: {
+  messages: ChatMessage[];
+  title?: string;
+  thinking?: boolean;
+  compact?: boolean; // no minimum height (used in Play)
+}) {
   return (
-    <div className="flex h-full min-h-[220px] flex-col lg:min-h-[420px] overflow-hidden rounded-[2rem] border-4 border-surface-2 bg-bg shadow-2xl">
+    <div
+      className={`flex h-full flex-col overflow-hidden rounded-[2rem] border-4 border-surface-2 bg-bg shadow-2xl ${
+        compact ? "" : "min-h-[220px] lg:min-h-[420px]"
+      }`}
+    >
       <div className="flex items-center gap-2 border-b border-line bg-surface px-5 py-3">
         <span className="h-2.5 w-2.5 rounded-full bg-fix" />
         <span className="text-sm font-semibold">{title}</span>

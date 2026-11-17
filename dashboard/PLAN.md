@@ -521,12 +521,12 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [ ] Sinda does one full run-through and notes what is unclear (write notes in the build log)
 
 ### Phase 6: Play mode (simulated)
-- [ ] Access code screen
-- [ ] Context Lab: switches, editable docs, who asks, presets, budget slider, simulated model
-- [ ] Red team: ticket editor, preset attacks, gateway switches, timeout toggle, simulated agent
-- [ ] 10 missions with auto-check and "why" cards
-- [ ] Exercise votes (S1 drain pump A/B/C/D, S2 allow/approve/deny)
-- [ ] Phone layout checked at 375 px width
+- [ ] Access code screen (moved to phase 7: needs the admin switches; today the whole site uses Sinda's private code)
+- [x] Context Lab: switches, editable docs, who asks, presets, budget slider, simulated model
+- [x] Red team: ticket editor, preset attacks, gateway switches, timeout toggle, simulated agent
+- [x] 10 missions with auto-check and "why" cards
+- [ ] Exercise votes (S1 drain pump A/B/C/D, S2 allow/approve/deny) (moved to phase 7: needs the shared database)
+- [x] Phone layout checked at 375 px width
 
 ### Phase 7: Admin
 - [ ] Upstash Redis connected through Vercel Marketplace
@@ -565,6 +565,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Site lock added at Sinda's request (the site must not be public before the talk). `proxy.ts` sends every page to `/locked` unless the `site_pass` cookie holds an HMAC keyed with `SITE_ACCESS_CODE`; APIs answer 401. Tested in production mode: no cookie → 307 to /locked, wrong code → error, right code → cookie (httpOnly, 30 days) and back to the page, forged cookie → locked, `next=//evil.com` → `/`, no variable set → nobody can enter. Phase 7 will add an audience code and a 'Site open' switch on top of this; keep this lock as Sinda's own key.
 - 2026-11-18: Phase 4 done. `/s2` plays Broken run → Four failures → Through the gateway → Path check as one clicker flow (same pattern as `/s1`). Broken run: money counter 0 → 349 → 698 → 827, service-account badge, payments ledger, loop of 9 drafts, trajectory FAILs. Gated run: on-behalf-of badge, gateway checklist per step, human inbox at G3 (Deny/Approve; approve pays 349 once), audit record linking to `/s1?view=fixed&step=F7`. Path check: trajectory checks (`lib/s2/path.ts`), pass^k sliders + SVG chart, autonomy ladder and promotion gate from slide 21. Fictional final chat messages are in `lib/s2/fixtures.ts`. 16 tests. Checked at 1440 px and at the narrow pane width. Old `/s1`, `/s2` text views removed.
 - 2026-11-18: Sinda set `SITE_ACCESS_CODE` in Vercel (Secret, Production). The live site opens only with her code.
+- 2026-11-18: Phase 6 done (simulated Play). Tab 5 "Play" on `/s1` and `/s2` (`?view=play`). Context Lab (`lib/s1/lab.ts`, `components/s1/S1Lab.tsx`): switches Select/Secure/Refresh/Budget/Observe (Validate stays in the story, F6), who asks (customer/staff), two questions, editable status and ACL, add Draft v3 or an old web FAQ, budget or character-cut slider, rule-based simulated model, fate of every document, manifest. Red team (`lib/s2/lab.ts`, `components/s2/S2Lab.tsx`): 4 preset attacks or free text (400 chars), simulated agent that does what the text asks (it reproduces the recorded story trajectory), real gateway with Bound/Authorize/Contain/Gate/Hard cap switches, timeout toggle. 11 missions (6 + 5), each with hint and why, saved in localStorage; pop-up when solved; pinned result bar on phones. 28 tests (every mission has a tested solution). Finding: the goodwill rule is 48 days old, so Refresh's 30-day TTL also hides it; the Leaky bucket mission says so. Checked at 1440 px and 375 px (no sideways scroll after adding min-w-0 to the grid columns).
 
 ---
 

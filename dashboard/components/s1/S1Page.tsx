@@ -6,12 +6,14 @@ import { setSearch, useSearch } from "@/lib/useSearch";
 import { S1Story } from "./S1Story";
 import { S1Problems } from "./S1Problems";
 import { S1Compare } from "./S1Compare";
+import { S1Lab } from "./S1Lab";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
   { id: "problems", label: "Four problems" },
   { id: "fixed", label: "Fixed run" },
   { id: "compare", label: "Compare" },
+  { id: "play", label: "Play" },
 ] as const;
 type View = (typeof VIEWS)[number]["id"];
 
@@ -64,12 +66,6 @@ export function S1Page() {
             {v.label}
           </button>
         ))}
-        <span
-          className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-dashed border-line px-4 py-2 text-sm text-muted/60"
-          title="Coming soon"
-        >
-          <span className="font-mono text-xs">5</span> Play (soon)
-        </span>
       </nav>
 
       {view === "broken" && (
@@ -88,8 +84,15 @@ export function S1Page() {
         <S1Story key={key} run="fixed" initial={initial} onPrevView={back} nextView={nextOf("Compare", "compare")} />
       )}
       {view === "compare" && (
-        <S1Compare key={key} initial={initial} onPrevView={back} onJump={(run, stepId) => go(run, stepIndex(run, stepId))} />
+        <S1Compare
+          key={key}
+          initial={initial}
+          onPrevView={back}
+          nextView={nextOf("Play", "play")}
+          onJump={(run, stepId) => go(run, stepIndex(run, stepId))}
+        />
       )}
+      {view === "play" && <S1Lab key={key} />}
     </div>
   );
 }

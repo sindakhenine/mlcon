@@ -16,8 +16,16 @@ const STEPS = [
 const CHECKS = pathChecks();
 
 /** Evaluate and promote: trajectory checks, the pass^k calculator, the autonomy ladder. */
-export function S2Path({ initial = 0, onPrevView }: { initial?: number; onPrevView?: () => void }) {
-  const player = usePlayer(STEPS.length, { initial, onBeforeStart: onPrevView });
+export function S2Path({
+  initial = 0,
+  onPrevView,
+  nextView,
+}: {
+  initial?: number;
+  onPrevView?: () => void;
+  nextView?: { label: string; go: () => void };
+}) {
+  const player = usePlayer(STEPS.length, { initial, onBeforeStart: onPrevView, onPastEnd: nextView?.go });
   return (
     <div className="flex flex-col gap-4">
       <motion.section
@@ -36,7 +44,7 @@ export function S2Path({ initial = 0, onPrevView }: { initial?: number; onPrevVi
           {player.index === 2 && <Ladder />}
         </div>
       </motion.section>
-      <PlayerBar player={player} steps={STEPS} tone="fix" />
+      <PlayerBar player={player} steps={STEPS} tone="fix" nextView={nextView} />
     </div>
   );
 }
