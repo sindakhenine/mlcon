@@ -319,22 +319,22 @@ Route `/admin`. Password from the `ADMIN_PASSWORD` environment variable. After l
 
 ## 8. Stage map: which slide, which screen
 
-Rule: **at most three switches per talk.** Everything else stays in the slides. Each screen has a fixed URL so you can open it in advance in browser tabs.
+Rule: **at most three switches per talk.** Everything else stays in the slides. Each screen has a fixed URL so you can open it in advance in browser tabs. Add `&step=B4` (any step id) to open a story at that step.
 
 ### Session 1
 
 | When | Slide | Screen | URL |
 |---|---|---|---|
-| Opening | After slide 2 (or instead of its right half) | Broken run B1 to B8, then Four problems | `/s1/story?run=broken&mode=stage` |
-| Middle | After slide 16 "Log the window" | Fixed run F1 to F8, then Compare | `/s1/story?run=fixed&mode=stage` |
+| Opening | After slide 2 (or instead of its right half) | Broken run B1 to B8, then Four problems | `/s1?view=broken&mode=stage` |
+| Middle | After slide 16 "Log the window" | Fixed run F1 to F8, then Compare | `/s1?view=fixed&mode=stage` |
 | End | Slide 19 "Ship these five" | QR code + live counters during Q&A | `/stage/s1` |
 
 ### Session 2
 
 | When | Slide | Screen | URL |
 |---|---|---|---|
-| Opening | After slide 2 | Broken run S1 to S8, then Four failures | `/s2/story?run=broken&mode=stage` |
-| Middle | Slide 18 "Same proposals, through the gateway" | Gated run with human inbox | `/s2/story?run=gated&mode=stage` |
+| Opening | After slide 2 | Broken run S1 to S8, then Four failures | `/s2?view=broken&mode=stage` |
+| Middle | Slide 18 "Same proposals, through the gateway" | Gated run with human inbox | `/s2?view=gated&mode=stage` |
 | End | Slide 22 "Ship these six" | QR code + attack counter during Q&A | `/stage/s2` |
 
 Check the slide numbers against the final decks before the talk (task in phase 9).
@@ -501,9 +501,9 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 
 ### Phase 3: Session 1 screens
 - [x] Broken run B1 to B8
-- [ ] Four problems screen with jump-to-step
+- [x] Four problems screen with jump-to-step
 - [x] Fixed run F1 to F8 (including Validate good and bad payload)
-- [ ] Compare screen
+- [x] Compare screen
 - [ ] Optional: drain pump exercise replay
 
 ### Phase 4: Session 2 screens
@@ -560,6 +560,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-17: Repo pushed to https://github.com/sindakhenine/mlcon (first commit 8919fcd). Next: connect Vercel (Sinda logs in at vercel.com, imports the repo, Root Directory = `dashboard`), then phase 2.
 - 2026-11-17: Phase 0 done. Vercel project `mlcon` deployed from `main`, live at https://mlcon.vercel.app; `/s1` and `/s2` checked.
 - 2026-11-18: Phase 2 done. `components/player/` (usePlayer: arrows, PageUp/PageDown for clickers, space, P play, R restart, End; PlayerBar with step dots and 0.5x/1x/2x) and `components/story/` (Rail, Inspector, ChatPanel with typing and marks, FileCard with flip and stamps, CutWindow + BudgetWindow, ManifestView, MoneyCounter, GatewayBox, ProblemBadge). Phase 3 started early: `components/s1/S1Story.tsx` renders all 16 Session 1 steps (B1-B8, F1-F8). Test page `/lab` (not linked, noindex) shows S1 broken, S1 fixed and the S2 money counter + gateway box. Checked in the browser at desktop and 375 px (no sideways page scroll; the rail scrolls inside its box). Fixed: browser-default yellow on answer marks. Still to do in phase 3: Four problems screen, Compare screen, put S1Story on `/s1` with sub-tabs.
+- 2026-11-18: Phase 3 done (drain pump replay left as optional). `/s1` is now the real page: tabs Broken run → Four problems → Fixed run → Compare, as one clicker flow (next on the last step opens the next screen, back on the first step returns to the previous one at its end). Four problems reveals one card per click, highlights the matching document, and each card jumps to its step. Compare reveals one row per click; values come from `lib/s1/compare.ts` (tested in `tests/compare.test.ts`, 13 tests total). Deep links: `/s1?view=fixed&step=F4` (`lib/useSearch.ts`, no Suspense needed, pages stay static). Lesson: editing files with `sed -i` while `next dev` runs made the server keep an old copy (hydration error); restart the dev server or edit with the Edit tool.
 
 ---
 

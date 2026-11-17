@@ -7,7 +7,17 @@ import type { Step } from "@/lib/trace";
 const SPEEDS = [0.5, 1, 2];
 
 /** Controls under a story: back, play, next, one dot per step, speed. */
-export function PlayerBar({ player, steps, tone }: { player: PlayerState; steps: Step[]; tone: "bug" | "fix" }) {
+export function PlayerBar({
+  player,
+  steps,
+  tone,
+  nextView,
+}: {
+  player: PlayerState;
+  steps: Pick<Step, "id" | "title">[];
+  tone: "bug" | "fix";
+  nextView?: { label: string; go: () => void };
+}) {
   const dot = tone === "bug" ? "bg-bug" : "bg-fix";
   const btn =
     "inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-text transition hover:border-brand disabled:opacity-30";
@@ -27,9 +37,19 @@ export function PlayerBar({ player, steps, tone }: { player: PlayerState; steps:
       >
         {player.playing ? <Pause size={20} /> : <Play size={20} />}
       </button>
-      <button className={btn} onClick={player.next} disabled={player.atEnd} aria-label="Next" title="Next (→)">
-        <ChevronRight size={20} />
-      </button>
+      {player.atEnd && nextView ? (
+        <button
+          onClick={nextView.go}
+          className="inline-flex h-10 items-center gap-1 rounded-full border border-brand bg-surface-2 px-4 text-sm font-semibold text-text transition hover:bg-brand hover:text-bg"
+          title="Next screen (→)"
+        >
+          Next: {nextView.label} <ChevronRight size={18} />
+        </button>
+      ) : (
+        <button className={btn} onClick={player.next} disabled={player.atEnd} aria-label="Next" title="Next (→)">
+          <ChevronRight size={20} />
+        </button>
+      )}
 
       <ol className="flex flex-1 items-center gap-1.5 px-2" aria-label="Steps">
         {steps.map((s, i) => (

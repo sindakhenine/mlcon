@@ -55,9 +55,21 @@ const FIXED_NODES: RailNode[] = [
 ];
 
 /** Session 1 story: chat on the left, the X-ray on the right, controls below. */
-export function S1Story({ run, initial = 0, keyboard = true }: { run: "broken" | "fixed"; initial?: number; keyboard?: boolean }) {
+export function S1Story({
+  run,
+  initial = 0,
+  keyboard = true,
+  nextView,
+  onPrevView,
+}: {
+  run: "broken" | "fixed";
+  initial?: number; // step index, -1 = last step
+  keyboard?: boolean;
+  nextView?: { label: string; go: () => void };
+  onPrevView?: () => void;
+}) {
   const steps = useMemo(() => (run === "broken" ? traceBroken() : traceFixed()), [run]);
-  const player = usePlayer(steps.length, { initial, keyboard });
+  const player = usePlayer(steps.length, { initial, keyboard, onPastEnd: nextView?.go, onBeforeStart: onPrevView });
   const step = steps[player.index];
   const tone = run === "broken" ? "bug" : "fix";
   const nodes = run === "broken" ? BROKEN_NODES : FIXED_NODES;
@@ -89,7 +101,7 @@ export function S1Story({ run, initial = 0, keyboard = true }: { run: "broken" |
           </Inspector>
         </div>
       </div>
-      <PlayerBar player={player} steps={steps} tone={tone} />
+      <PlayerBar player={player} steps={steps} tone={tone} nextView={nextView} />
     </div>
   );
 }

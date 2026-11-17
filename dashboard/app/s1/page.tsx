@@ -1,15 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { traceBroken, traceFixed } from "@/lib/s1/trace";
-import { TraceList } from "../_components/TraceList";
+import { S1Page } from "@/components/s1/S1Page";
+
+export const metadata: Metadata = {
+  title: "Session 1: Context engineering",
+  description: "Same model, same prompt, wrong answer. Watch what the AI really received, and the fixed pipeline.",
+};
 
 export default function Session1() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-8">
-      <Link href="/" className="text-sm text-brand">← Home</Link>
-      <h1 className="mt-4 text-3xl font-semibold">Session 1: same model, same prompt, wrong answer</h1>
-      <p className="mt-2 text-muted">Draft view. The animated story comes in the next build phase.</p>
-      <TraceList title="Broken pipeline" steps={traceBroken()} tone="bug" />
-      <TraceList title="Fixed pipeline" steps={traceFixed()} tone="fix" />
+    <main className="mx-auto w-full max-w-[1500px] px-4 py-5 sm:px-6">
+      <header className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <Link href="/" className="text-sm text-brand">← Home</Link>
+        <p className="font-mono text-xs uppercase tracking-widest text-bug">Session 1</p>
+        <h1 className="text-xl font-semibold sm:text-2xl">Same model, same prompt, wrong answer</h1>
+        <p className="ml-auto hidden text-sm text-muted md:block">→ next · ← back · P play · R restart</p>
+      </header>
+      <S1Page />
     </main>
   );
 }

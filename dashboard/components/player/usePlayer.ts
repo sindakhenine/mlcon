@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface PlayerState {
   index: number;
@@ -21,11 +21,21 @@ interface Options {
   initial?: number;
   autoMs?: number; // time per step in autoplay, at speed 1
   keyboard?: boolean; // arrows, PageUp/PageDown (clickers), space, R, P
+  onPastEnd?: () => void; // "next" on the last step: hand over to the next screen
+  onBeforeStart?: () => void; // "back" on the first step: go to the previous screen
 }
 
 /** Steps through a trace. Works with a presentation clicker, which sends PageDown / PageUp. */
-export function usePlayer(count: number, { initial = 0, autoMs = 3500, keyboard = true }: Options = {}): PlayerState {
-  const [index, setIndex] = useState(Math.min(Math.max(initial, 0), Math.max(count - 1, 0)));
+export function usePlayer(
+  count: number,
+  { initial = 0, autoMs = 3500, keyboard = true, onPastEnd, onBeforeStart }: Options = {},
+): PlayerState {
+  // initial -1 means "start at the last step" (used when coming back from the next screen)
+  const [index, setIndex] = useState(initial < 0 ? Math.max(count - 1, 0) : Math.min(initial, Math.max(count - 1, 0)));
+  const edges = useRef({ onPastEnd, onBeforeStart });
+  useEffect(() => {
+    edges.current = { onPastEnd, onBeforeStart };
+  }, [onPastEnd, onBeforeStart]);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
 
@@ -60,13 +70,15 @@ export function usePlayer(count: number, { initial = 0, autoMs = 3500, keyboard 
         case " ":
           e.preventDefault();
           setPlaying(false);
-          next();
+          if (index >= count - 1 && edges.current.onPastEnd) edges.current.onPastEnd();
+          else next();
           break;
         case "ArrowLeft":
         case "PageUp":
           e.preventDefault();
           setPlaying(false);
-          prev();
+          if (index <= 0 && edges.current.onBeforeStart) edges.current.onBeforeStart();
+          else prev();
           break;
         case "r":
         case "R":
@@ -84,7 +96,7 @@ export function usePlayer(count: number, { initial = 0, autoMs = 3500, keyboard 
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [keyboard, next, prev, restart, togglePlay, goto, count]);
+  }, [keyboard, next, prev, restart, togglePlay, goto, count, index]);
 
   return {
     index,

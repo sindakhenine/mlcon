@@ -10,3 +10,4 @@
 8. Stage mode must work with no network after the page has loaded. Do not add network calls to the story screens.
 9. The owner (Sinda) is not a front-end developer. Explain decisions in plain words and say what is not done or not tested.
 10. This is Next.js 16 (see `AGENTS.md`): APIs may differ from what you remember. Check `node_modules/next/dist/docs/` before using a Next.js API you are not sure about.
+11. While the dev server runs, change files with the Edit/Write tools, not `sed -i` (Turbopack can keep serving the old file). If a hydration error mentions old class names, restart the dev server.
