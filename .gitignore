@@ -1,0 +1,9 @@
+# Only the code goes into the public repo. Slides, scripts and notes stay local.
+/*
+!/.gitignore
+!/README.md
+!/companion-code/
+!/dashboard/
+__pycache__/
+*.pyc
+.DS_Store

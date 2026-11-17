@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Design tokens. Dark "control room" is the default (projector friendly).
+   Light theme: <html data-theme="light">. Same hues as the slide decks:
+   navy 23234F, bug red C8344A, fix green 1E7F63. */
+:root {
+  --bg: #0b0d1f;
+  --surface: #14173a;
+  --surface-2: #1c2050;
+  --border: #2c3170;
+  --text: #eef0ff;
+  --muted: #a2a8d4;
+  --brand: #9aa2ff;
+  --navy: #23234f;
+  --bug: #ff6b81;
+  --bug-soft: rgba(255, 107, 129, 0.14);
+  --fix: #3ccf9f;
+  --fix-soft: rgba(60, 207, 159, 0.14);
+  --warn: #f2b84b;
+  --warn-soft: rgba(242, 184, 75, 0.14);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f7;
+  --border: #d9dcea;
+  --text: #1a1b3a;
+  --muted: #5f6378;
+  --brand: #23234f;
+  --bug: #c8344a;
+  --bug-soft: rgba(200, 52, 74, 0.1);
+  --fix: #1e7f63;
+  --fix-soft: rgba(30, 127, 99, 0.1);
+  --warn: #a86a00;
+  --warn-soft: rgba(168, 106, 0, 0.1);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-navy: var(--navy);
+  --color-bug: var(--bug);
+  --color-bug-soft: var(--bug-soft);
+  --color-fix: var(--fix);
+  --color-fix-soft: var(--fix-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

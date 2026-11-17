@@ -1,0 +1,58 @@
+{
+  "query": "Can I return my dishwasher? I bought it 45 days ago.",
+  "broken": {
+    "ranked": [
+      "refund_policy_v1",
+      "refund_policy_v1_scan",
+      "goodwill_guidelines",
+      "refund_policy_v2"
+    ],
+    "joined_full": "Returns are accepted within 60 days of purchase.\nReturns are accepted within 60 days of purchase.\nStaff may grant a goodwill credit up to 200 EUR.\nReturns are accepted within 30 days of purchase. After 30 days, defects are repaired under the 24-month warranty.",
+    "context": "Returns are accepted within 60 days of purchase.\nReturns are accepted within 60 days of purchase.\nStaff may grant a goodwill credit up to 200 EUR.\nReturns are a",
+    "max_chars": 160
+  },
+  "fixed": {
+    "admitted": [
+      "refund_policy_v2"
+    ],
+    "admitted_tokens": [
+      28
+    ],
+    "manifest": {
+      "request_id": "req-1",
+      "user": "cust-4471",
+      "groups": [
+        "public"
+      ],
+      "query": "Can I return my dishwasher? I bought it 45 days ago.",
+      "admitted": [
+        {
+          "id": "refund_policy_v2",
+          "version": "v2",
+          "source": "policy_cms",
+          "score": 0.83,
+          "tokens": 28,
+          "trust": "verified"
+        }
+      ],
+      "rejected": [
+        {
+          "id": "refund_policy_v1",
+          "reason": "status=superseded"
+        },
+        {
+          "id": "refund_policy_v1_scan",
+          "reason": "status=superseded"
+        }
+      ]
+    }
+  },
+  "validate": {
+    "good": {
+      "order_id": "8812",
+      "purchased_on": "2026-10-04",
+      "amount_eur": 349.0
+    },
+    "bad": "tool result rejected: amount_eur missing or not float"
+  }
+}
