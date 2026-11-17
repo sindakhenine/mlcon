@@ -493,16 +493,16 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [x] Vitest: S2 verdicts and reasons equal to Python for all 9 steps; idempotency key equal; broken total 827
 
 ### Phase 2: Player and components
-- [ ] `Player` (step, back, autoplay, speed, scrub dots)
-- [ ] `Rail` + `Inspector` + `ChatPanel` (typing animation)
-- [ ] `FileCard` (flip), `ContextWindow` (scissors, budget bar), `ManifestView` (line-by-line JSON)
-- [ ] `MoneyCounter`, `GatewayBox` (7 checks lighting up), `ProblemBadge`
-- [ ] Reduced motion support
+- [x] `Player` (step, back, autoplay, speed, scrub dots)
+- [x] `Rail` + `Inspector` + `ChatPanel` (typing animation)
+- [x] `FileCard` (flip), `ContextWindow` (scissors, budget bar), `ManifestView` (line-by-line JSON)
+- [x] `MoneyCounter`, `GatewayBox` (7 checks lighting up), `ProblemBadge`
+- [x] Reduced motion support
 
 ### Phase 3: Session 1 screens
-- [ ] Broken run B1 to B8
+- [x] Broken run B1 to B8
 - [ ] Four problems screen with jump-to-step
-- [ ] Fixed run F1 to F8 (including Validate good and bad payload)
+- [x] Fixed run F1 to F8 (including Validate good and bad payload)
 - [ ] Compare screen
 - [ ] Optional: drain pump exercise replay
 
@@ -559,6 +559,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-17: Phase 1 done. Demo scripts now run their printing under `if __name__ == "__main__"` (output unchanged, checked with diff) so `export_traces.py` can import them. `npm run golden` regenerates `fixtures/golden/*.json`; `npm test` runs 11 tests, all pass, including the idempotency key `da461cfee31c`. Engines: `lib/s1/engine.ts`, `lib/s2/gateway.ts` (gateway takes optional `Controls` so Play mode can switch checks off). Traces: `lib/s1/trace.ts`, `lib/s2/trace.ts`; `gatewayChecks()` gives the per-check list for the gateway animation and is tested against `authorize()`. Temporary text views at `/s1` and `/s2` show the traces; phase 2 replaces them.
 - 2026-11-17: Repo pushed to https://github.com/sindakhenine/mlcon (first commit 8919fcd). Next: connect Vercel (Sinda logs in at vercel.com, imports the repo, Root Directory = `dashboard`), then phase 2.
 - 2026-11-17: Phase 0 done. Vercel project `mlcon` deployed from `main`, live at https://mlcon.vercel.app; `/s1` and `/s2` checked.
+- 2026-11-18: Phase 2 done. `components/player/` (usePlayer: arrows, PageUp/PageDown for clickers, space, P play, R restart, End; PlayerBar with step dots and 0.5x/1x/2x) and `components/story/` (Rail, Inspector, ChatPanel with typing and marks, FileCard with flip and stamps, CutWindow + BudgetWindow, ManifestView, MoneyCounter, GatewayBox, ProblemBadge). Phase 3 started early: `components/s1/S1Story.tsx` renders all 16 Session 1 steps (B1-B8, F1-F8). Test page `/lab` (not linked, noindex) shows S1 broken, S1 fixed and the S2 money counter + gateway box. Checked in the browser at desktop and 375 px (no sideways page scroll; the rail scrolls inside its box). Fixed: browser-default yellow on answer marks. Still to do in phase 3: Four problems screen, Compare screen, put S1Story on `/s1` with sub-tabs.
 
 ---
 
