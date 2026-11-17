@@ -37,7 +37,7 @@ export function StageClient({ session }: { session: "s1" | "s2" }) {
       setOrigin(window.location.origin);
       load();
     }, 0);
-    const t = setInterval(load, 3000);
+    const t = setInterval(load, 5000);
     return () => {
       clearTimeout(first);
       clearInterval(t);

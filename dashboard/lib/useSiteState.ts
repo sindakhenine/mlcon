@@ -10,21 +10,28 @@ export interface SiteState {
   spotlight: string;
 }
 
-/** Polls the admin switches every 4 seconds while mounted. Null until the first answer. */
+/**
+ * Polls the admin switches every 8 seconds while mounted (a vote or "Play open"
+ * reaches phones within 8 s). Counts the visitor at most once a minute.
+ * Null until the first answer.
+ */
 export function useSiteState(): SiteState | null {
   const [s, setS] = useState<SiteState | null>(null);
   useEffect(() => {
     let alive = true;
+    let lastSeen = 0;
     const load = async () => {
       try {
-        const r = await fetch("/api/state", { cache: "no-store" });
+        const count = Date.now() - lastSeen > 60_000;
+        const r = await fetch(count ? "/api/state?seen=1" : "/api/state", { cache: "no-store" });
+        if (count) lastSeen = Date.now();
         if (r.ok && alive) setS(await r.json());
       } catch {
         // offline: keep the last known state
       }
     };
     const first = setTimeout(load, 0);
-    const t = setInterval(load, 4000);
+    const t = setInterval(load, 8000);
     return () => {
       alive = false;
       clearTimeout(first);

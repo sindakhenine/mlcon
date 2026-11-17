@@ -74,13 +74,14 @@ function redisBackend(r: Redis): Backend {
       if (ttl) await r.expire(PREFIX + k, ttl);
       return added === 1;
     },
-    async zseen(k, m, now, windowMs) {
+    // One command per visit. Old entries are pruned when someone reads the count.
+    async zseen(k, m, now) {
       await r.zadd(PREFIX + k, { score: now, member: m });
-      await r.zremrangebyscore(PREFIX + k, 0, now - windowMs);
-      return r.zcard(PREFIX + k);
+      return 0;
     },
     async zcount(k, now, windowMs) {
-      return r.zcount(PREFIX + k, now - windowMs, "+inf");
+      await r.zremrangebyscore(PREFIX + k, 0, now - windowMs);
+      return r.zcard(PREFIX + k);
     },
     async lpush(k, v, keep, ttl) {
       await r.lpush(PREFIX + k, v);
@@ -177,9 +178,9 @@ export function storeStatus(): "redis" | "memory" | "none" {
 // ---------------------------------------------------------------- config
 let cache: { at: number; cfg: SiteConfig } | null = null;
 
-/** Current switches. Cached for 3 seconds per server instance. Errors mean "closed". */
+/** Current switches. Cached for 5 seconds per server instance. Errors mean "closed". */
 export async function getConfig(fresh = false): Promise<SiteConfig> {
-  if (!fresh && cache && Date.now() - cache.at < 3000) return cache.cfg;
+  if (!fresh && cache && Date.now() - cache.at < 5000) return cache.cfg;
   const s = store();
   let cfg = { ...DEFAULT_CONFIG };
   if (s) {

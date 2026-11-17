@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
   const role = roleHeader(request);
   const cfg = await getConfig();
   const { vid, isNew } = visitorId(request);
-  await seen(vid).catch(() => undefined);
+  // The page asks to be counted about once a minute (?seen=1), not on every poll.
+  if (request.nextUrl.searchParams.get("seen") === "1") await seen(vid).catch(() => undefined);
   return withVid(
     json({ role, playOpen: cfg.playOpen, liveAI: cfg.liveAI, poll: cfg.poll, spotlight: cfg.spotlight }),
     vid,

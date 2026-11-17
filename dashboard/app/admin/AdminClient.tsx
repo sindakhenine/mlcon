@@ -18,7 +18,7 @@ interface AdminState {
   missions: { id: string; title: string }[];
 }
 
-/** The admin page: switches, codes, votes, counters. Refreshes every 3 seconds. */
+/** The admin page: switches, codes, votes, counters. Refreshes every 5 seconds. */
 export function AdminClient() {
   const q = useSearch();
   const [state, setState] = useState<AdminState | null>(null);
@@ -40,7 +40,7 @@ export function AdminClient() {
 
   useEffect(() => {
     const first = setTimeout(load, 0);
-    const t = setInterval(load, 3000);
+    const t = setInterval(load, 5000);
     return () => {
       clearTimeout(first);
       clearInterval(t);

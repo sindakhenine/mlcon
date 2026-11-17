@@ -529,7 +529,7 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [x] Phone layout checked at 375 px width
 
 ### Phase 7: Admin
-- [ ] Upstash Redis connected through Vercel Marketplace (Sinda: Vercel > Storage, 2 clicks; code is ready)
+- [x] Upstash Redis connected through Vercel Marketplace (free plan, Frankfurt, 2026-11-18)
 - [x] `/admin` login with `ADMIN_PASSWORD`, signed cookie
 - [x] All switches from section 7, polled by clients every 3 s
 - [x] Counters, vote results, attack log (7-day expiry)
@@ -567,6 +567,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Sinda set `SITE_ACCESS_CODE` in Vercel (Secret, Production). The live site opens only with her code.
 - 2026-11-18: Phase 6 done (simulated Play). Tab 5 "Play" on `/s1` and `/s2` (`?view=play`). Context Lab (`lib/s1/lab.ts`, `components/s1/S1Lab.tsx`): switches Select/Secure/Refresh/Budget/Observe (Validate stays in the story, F6), who asks (customer/staff), two questions, editable status and ACL, add Draft v3 or an old web FAQ, budget or character-cut slider, rule-based simulated model, fate of every document, manifest. Red team (`lib/s2/lab.ts`, `components/s2/S2Lab.tsx`): 4 preset attacks or free text (400 chars), simulated agent that does what the text asks (it reproduces the recorded story trajectory), real gateway with Bound/Authorize/Contain/Gate/Hard cap switches, timeout toggle. 11 missions (6 + 5), each with hint and why, saved in localStorage; pop-up when solved; pinned result bar on phones. 28 tests (every mission has a tested solution). Finding: the goodwill rule is 48 days old, so Refresh's 30-day TTL also hides it; the Leaky bucket mission says so. Checked at 1440 px and 375 px (no sideways scroll after adding min-w-0 to the grid columns).
 - 2026-11-18: Phase 7 code done. Three keys (`lib/gate.ts`): owner (`SITE_ACCESS_CODE`, always in), audience (code set in admin, works only while Site open; case-insensitive; rotating or closing locks them out), admin (`ADMIN_PASSWORD`, 12 h cookie). `proxy.ts` passes the role to the app as `x-mlcon-role` (overwritten, so it cannot be faked). Store `lib/store.ts`: Upstash Redis if `KV_REST_API_URL/TOKEN` exist, memory in local dev, otherwise everything closed. Admin `/admin`: Site open, Play open, Live AI (no effect until phase 8), audience code (save/new), live vote (5 polls in `lib/polls.ts`), spotlight mission, limits, kill switch, reset, live numbers, attack log. Audience: Play shows 'opens during the talk' until Play open; live vote card; spotlight banner. Counters: missions once per visitor, red team attempts/blocked, visitors in 5 min. Stage pages `/stage/s1`, `/stage/s2`: QR to `/sN?view=play`, code, counters, vote bars (owner/admin only). Tested end to end with test passwords: `tests/e2e_access.py`, 19/19 pass. Waiting for Sinda: `ADMIN_PASSWORD` secret and Upstash Redis in Vercel.
+- 2026-11-18: Sinda set `ADMIN_PASSWORD` (Secret) and connected Upstash Redis (free plan: 500,000 commands a month, Frankfurt; Vercel added KV_* and REDIS_URL). Made the site light on the database: phones poll every 8 s and are counted once a minute, admin and stage poll every 5 s, config cached 5 s, 'seen' is one command. Estimate: about 25,000 commands per 45-minute talk with 200 phones. e2e test still 19/19.
 
 ---
 
