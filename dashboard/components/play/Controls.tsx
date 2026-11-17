@@ -87,16 +87,19 @@ export function Missions<I, O>({
   justSolved,
   onDismiss,
   onReset,
+  spotlight = "",
 }: {
   missions: Mission<I, O>[];
   solved: string[];
   justSolved: string | null;
   onDismiss: () => void;
   onReset: () => void;
+  spotlight?: string; // mission the speaker asks everyone to try now
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const celebrate = missions.find((m) => m.id === justSolved);
+  const spot = missions.find((m) => m.id === spotlight);
   return (
     <Card
       title={`Missions · ${solved.length} of ${missions.length}`}
@@ -127,12 +130,22 @@ export function Missions<I, O>({
           </motion.div>
         )}
       </AnimatePresence>
+      {spot && (
+        <p className="mb-3 rounded-xl border-2 border-brand bg-surface-2 px-3 py-2 text-sm font-semibold">
+          Everyone, try this now: {spot.title}. {spot.goal}
+        </p>
+      )}
       <ol className="space-y-1.5">
         {missions.map((m, i) => {
           const done = solved.includes(m.id);
           const isOpen = open === m.id;
           return (
-            <li key={m.id} className={`rounded-xl border ${done ? "border-fix/50" : "border-line"} bg-bg`}>
+            <li
+              key={m.id}
+              className={`rounded-xl border ${done ? "border-fix/50" : "border-line"} bg-bg ${
+                m.id === spotlight ? "ring-2 ring-brand ring-offset-2 ring-offset-surface" : ""
+              }`}
+            >
               <button
                 onClick={() => setOpen(isOpen ? null : m.id)}
                 aria-expanded={isOpen}

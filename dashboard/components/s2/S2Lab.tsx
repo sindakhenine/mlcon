@@ -5,13 +5,27 @@ import { USER } from "@/lib/s2/fixtures";
 import { useLab } from "../play/useLab";
 import { Card, Missions, SimBanner, Toggle } from "../play/Controls";
 import { MoneyCounter } from "../story/MoneyCounter";
+import { useEffect, useRef } from "react";
+import { track } from "@/lib/useSiteState";
 
 const OFF: Record<Control, boolean> = { bound: false, authorize: false, contain: false, gate: false, hardCap: false };
 
 /** Session 2 Play: write an attack ticket, switch gateway controls off, see what gets paid. */
-export function S2Lab() {
+export function S2Lab({ spotlight = "" }: { spotlight?: string }) {
   const lab = useLab("mlcon-play-s2", defaultRedInput, runRed, S2_MISSIONS);
   const { input, output, update } = lab;
+
+  // Count each attack once the visitor stops typing (anonymous; the text goes to the admin attack log only).
+  const lastSent = useRef(input.ticket);
+  useEffect(() => {
+    if (input.ticket === lastSent.current || !input.ticket.trim()) return;
+    const t = setTimeout(() => {
+      lastSent.current = input.ticket;
+      const allOn = Object.values(input.controls).every(Boolean);
+      track({ type: "attack", ticket: input.ticket, paid: output.paid, allOn });
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [input.ticket, input.controls, output.paid]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -28,6 +42,7 @@ export function S2Lab() {
             justSolved={lab.justSolved}
             onDismiss={lab.clearJustSolved}
             onReset={lab.resetMissions}
+            spotlight={spotlight}
           />
 
           <Card title="The ticket (your attack)">

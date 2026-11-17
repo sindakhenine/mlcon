@@ -26,7 +26,7 @@ import { Chip } from "../story/FileCard";
 const BASE_IDS = new Set(INDEX.map((d) => d.id));
 
 /** Session 1 Play: switch stages off, edit documents, and watch the answer change. */
-export function S1Lab() {
+export function S1Lab({ spotlight = "" }: { spotlight?: string }) {
   const lab = useLab("mlcon-play-s1", defaultInput, runLab, S1_MISSIONS);
   const { input, output, update } = lab;
   const a = output.answer;
@@ -47,6 +47,7 @@ export function S1Lab() {
             justSolved={lab.justSolved}
             onDismiss={lab.clearJustSolved}
             onReset={lab.resetMissions}
+            spotlight={spotlight}
           />
 
           <Card

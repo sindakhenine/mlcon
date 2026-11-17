@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Mission } from "@/lib/s1/lab";
+import { track } from "@/lib/useSiteState";
 
 function load(key: string): string[] {
   try {
@@ -42,6 +43,7 @@ export function useLab<I, O>(storageKey: string, initial: () => I, run: (i: I) =
       setSolved(all);
       save(storageKey, all);
       setJustSolved(fresh[0]);
+      for (const id of fresh) track({ type: "mission", id }); // anonymous counter for the stage screen
     }
   };
 

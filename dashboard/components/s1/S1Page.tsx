@@ -7,6 +7,7 @@ import { S1Story } from "./S1Story";
 import { S1Problems } from "./S1Problems";
 import { S1Compare } from "./S1Compare";
 import { S1Lab } from "./S1Lab";
+import { PlayArea } from "../play/PlayArea";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
@@ -92,7 +93,7 @@ export function S1Page() {
           onJump={(run, stepId) => go(run, stepIndex(run, stepId))}
         />
       )}
-      {view === "play" && <S1Lab key={key} />}
+      {view === "play" && <PlayArea session="s1">{(spotlight) => <S1Lab key={key} spotlight={spotlight} />}</PlayArea>}
     </div>
   );
 }

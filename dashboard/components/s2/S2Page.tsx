@@ -7,6 +7,7 @@ import { S2Story } from "./S2Story";
 import { S2Failures } from "./S2Failures";
 import { S2Path } from "./S2Path";
 import { S2Lab } from "./S2Lab";
+import { PlayArea } from "../play/PlayArea";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
@@ -82,7 +83,7 @@ export function S2Page() {
         <S2Story key={key} run="gated" initial={initial} onPrevView={back} nextView={nextOf("Path check", "path")} />
       )}
       {view === "path" && <S2Path key={key} initial={initial} onPrevView={back} nextView={nextOf("Play", "play")} />}
-      {view === "play" && <S2Lab key={key} />}
+      {view === "play" && <PlayArea session="s2">{(spotlight) => <S2Lab key={key} spotlight={spotlight} />}</PlayArea>}
     </div>
   );
 }

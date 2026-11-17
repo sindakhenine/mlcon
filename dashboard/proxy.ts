@@ -1,10 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { GATE_COOKIE, cookieIsValid, gateDisabled } from "@/lib/gate";
+import { roleOf } from "@/lib/gate";
 
-/** Every page goes through here. Without the pass cookie, visitors only see /locked. */
-export function proxy(request: NextRequest) {
-  if (gateDisabled()) return NextResponse.next();
-  if (cookieIsValid(request.cookies.get(GATE_COOKIE)?.value)) return NextResponse.next();
+/**
+ * Every page goes through here. Owner (private code) or audience (code from the
+ * slide, only while the site is open) get in; everyone else sees /locked.
+ * The role is passed on to the app as a request header.
+ */
+export async function proxy(request: NextRequest) {
+  const role = await roleOf(request.cookies);
+  if (role) {
+    const headers = new Headers(request.headers);
+    headers.set("x-mlcon-role", role);
+    return NextResponse.next({ request: { headers } });
+  }
 
   const { pathname, search } = request.nextUrl;
   if (pathname.startsWith("/api/")) {
