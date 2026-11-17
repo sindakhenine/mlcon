@@ -508,10 +508,10 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [ ] Optional: drain pump exercise replay
 
 ### Phase 4: Session 2 screens
-- [ ] Broken run S1 to S8 with money counter and service account badge
-- [ ] Four failures screen with jump-to-step
-- [ ] Gated run steps 1 to 9 with human inbox and audit record linked to the S1 manifest
-- [ ] Path check: trajectory failures, pass^k slider and chart, autonomy ladder
+- [x] Broken run S1 to S8 with money counter and service account badge
+- [x] Four failures screen with jump-to-step
+- [x] Gated run steps 1 to 9 with human inbox and audit record linked to the S1 manifest
+- [x] Path check: trajectory failures, pass^k slider and chart, autonomy ladder
 
 ### Phase 5: Stage mode
 - [ ] Keyboard and clicker controls, `?mode=stage` big type
@@ -563,6 +563,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Phase 2 done. `components/player/` (usePlayer: arrows, PageUp/PageDown for clickers, space, P play, R restart, End; PlayerBar with step dots and 0.5x/1x/2x) and `components/story/` (Rail, Inspector, ChatPanel with typing and marks, FileCard with flip and stamps, CutWindow + BudgetWindow, ManifestView, MoneyCounter, GatewayBox, ProblemBadge). Phase 3 started early: `components/s1/S1Story.tsx` renders all 16 Session 1 steps (B1-B8, F1-F8). Test page `/lab` (not linked, noindex) shows S1 broken, S1 fixed and the S2 money counter + gateway box. Checked in the browser at desktop and 375 px (no sideways page scroll; the rail scrolls inside its box). Fixed: browser-default yellow on answer marks. Still to do in phase 3: Four problems screen, Compare screen, put S1Story on `/s1` with sub-tabs.
 - 2026-11-18: Phase 3 done (drain pump replay left as optional). `/s1` is now the real page: tabs Broken run → Four problems → Fixed run → Compare, as one clicker flow (next on the last step opens the next screen, back on the first step returns to the previous one at its end). Four problems reveals one card per click, highlights the matching document, and each card jumps to its step. Compare reveals one row per click; values come from `lib/s1/compare.ts` (tested in `tests/compare.test.ts`, 13 tests total). Deep links: `/s1?view=fixed&step=F4` (`lib/useSearch.ts`, no Suspense needed, pages stay static). Lesson: editing files with `sed -i` while `next dev` runs made the server keep an old copy (hydration error); restart the dev server or edit with the Edit tool.
 - 2026-11-18: Site lock added at Sinda's request (the site must not be public before the talk). `proxy.ts` sends every page to `/locked` unless the `site_pass` cookie holds an HMAC keyed with `SITE_ACCESS_CODE`; APIs answer 401. Tested in production mode: no cookie → 307 to /locked, wrong code → error, right code → cookie (httpOnly, 30 days) and back to the page, forged cookie → locked, `next=//evil.com` → `/`, no variable set → nobody can enter. Phase 7 will add an audience code and a 'Site open' switch on top of this; keep this lock as Sinda's own key.
+- 2026-11-18: Phase 4 done. `/s2` plays Broken run → Four failures → Through the gateway → Path check as one clicker flow (same pattern as `/s1`). Broken run: money counter 0 → 349 → 698 → 827, service-account badge, payments ledger, loop of 9 drafts, trajectory FAILs. Gated run: on-behalf-of badge, gateway checklist per step, human inbox at G3 (Deny/Approve; approve pays 349 once), audit record linking to `/s1?view=fixed&step=F7`. Path check: trajectory checks (`lib/s2/path.ts`), pass^k sliders + SVG chart, autonomy ladder and promotion gate from slide 21. Fictional final chat messages are in `lib/s2/fixtures.ts`. 16 tests. Checked at 1440 px and at the narrow pane width. Old `/s1`, `/s2` text views removed.
 
 ---
 
