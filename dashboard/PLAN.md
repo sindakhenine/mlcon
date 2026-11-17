@@ -585,7 +585,7 @@ Add one line per finished task: date, what, anything surprising.
 | Decision | Default |
 |---|---|
 | Dates and times of the two talks | Unknown. Write them here, they decide how much of the plan to build |
-| Repo name and public URL | `context-to-action` on GitHub, `context-to-action.vercel.app` |
+| Repo name and public URL | Decided: `sindakhenine/mlcon` on GitHub. Vercel URL still to choose |
 | Model for live AI | `claude-opus-5-5`, decide after the cost test |
 | Show attendee attacks on the projector | Only ones you pick in admin |
 | Keep Play open after the conference | One week, then Live AI off |
