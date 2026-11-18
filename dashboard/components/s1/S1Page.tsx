@@ -8,6 +8,7 @@ import { S1Problems } from "./S1Problems";
 import { S1Compare } from "./S1Compare";
 import { S1Lab } from "./S1Lab";
 import { PlayArea } from "../play/PlayArea";
+import { StageKeys } from "../stage/StageTools";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
@@ -53,6 +54,7 @@ export function S1Page() {
 
   return (
     <div className="flex flex-col gap-5">
+      <StageKeys />
       <nav aria-label="Session 1 screens" className="flex flex-wrap gap-2">
         {VIEWS.map((v, i) => (
           <button

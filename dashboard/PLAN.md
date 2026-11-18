@@ -505,7 +505,7 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [x] Four problems screen with jump-to-step
 - [x] Fixed run F1 to F8 (including Validate good and bad payload)
 - [x] Compare screen
-- [ ] Optional: drain pump exercise replay
+- [x] Optional: drain pump exercise replay (covered by the live vote `s1-stage` on the phones and the stage page)
 
 ### Phase 4: Session 2 screens
 - [x] Broken run S1 to S8 with money counter and service account badge
@@ -514,10 +514,10 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [x] Path check: trajectory failures, pass^k slider and chart, autonomy ladder
 
 ### Phase 5: Stage mode
-- [ ] Keyboard and clicker controls, `?mode=stage` big type
-- [ ] Cue cards from the speech script (`C` key)
-- [ ] Deep links from section 8 work
-- [ ] Wifi-off test after load passes
+- [x] Keyboard and clicker controls, `?mode=stage` big type
+- [x] Cue cards from the speech script (`C` key)
+- [x] Deep links from section 8 work
+- [x] Wifi-off test after load passes
 - [ ] Sinda does one full run-through and notes what is unclear (write notes in the build log)
 
 ### Phase 6: Play mode (simulated)
@@ -543,10 +543,10 @@ Times are for Claude doing the work with Sinda checking. **Phases 0 to 5 are the
 - [ ] Cost test: 20 runs each, write cost per run in the build log, Sinda decides Opus 5.5 or Haiku 5.5 (needs the API key; Sinda adds it 2026-11-19)
 
 ### Phase 9: Polish and rehearsal
-- [ ] Add QR codes to the end slides of both decks (`_build/session1.js`, `session2.js`, then rebuild)
-- [ ] Check slide numbers in section 8 against the final decks
-- [ ] Local backup: `npm run build && npm run start` on the laptop, tested with wifi off
-- [ ] Admin checklist for talk day written (section 16) and tried once (admin login verified live 2026-11-18)
+- [x] Add QR codes to the end slides of both decks (`_build/session1.js`, `session2.js`, then rebuild)
+- [x] Check slide numbers in section 8 against the final decks
+- [x] Local backup: `npm run build && npm run start` on the laptop, tested with wifi off
+- [x] Admin checklist for talk day written (section 16) and tried once (admin login verified live 2026-11-18)
 - [ ] Two timed rehearsals per talk
 
 ---
@@ -570,24 +570,34 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Sinda set `ADMIN_PASSWORD` (Secret) and connected Upstash Redis (free plan: 500,000 commands a month, Frankfurt; Vercel added KV_* and REDIS_URL). Made the site light on the database: phones poll every 8 s and are counted once a minute, admin and stage poll every 5 s, config cached 5 s, 'seen' is one command. Estimate: about 25,000 commands per 45-minute talk with 200 phones. e2e test still 19/19.
 - 2026-11-18: Sinda logged in to the live `/admin`: private code, admin password and database (redis) all show as set. Phase 7 complete. Next: phase 8 (live Claude) or phase 5 (stage mode).
 - 2026-11-18: Phase 8 code done, waiting for the key. Routes `/api/live/s1` (streams Claude's answer to the context the engine rebuilt on the server; browser text is never trusted, see `lib/liveInput.ts`) and `/api/live/s2` (manual agent loop in `lib/s2/liveAgent.ts`: Claude proposes, the same gateway decides, fake systems answer; strict tools; server caps 10 model turns and 14 tool calls even with Bound off; refusal stops the run). Guard `lib/live.ts`: site role + `ANTHROPIC_API_KEY` + Live AI switch + daily cap (crossing it turns Live AI off) + runs per person per day (owner 200). Model from `CLAUDE_MODEL`, default `claude-opus-5-5`, effort low, server-side refusal fallback (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`) on models that support it. Cost estimated from `usage`. Buttons 'Ask real Claude with this context' (S1) and 'Run this ticket with real Claude' (S2) appear only while Live AI is on. Admin shows key status, model, today's spend and runs. Tests: `tests/live.test.ts` runs the loop with a stand-in model (37 unit tests total); `tests/e2e_live.py` checks the guard with no key and with a fake key (error path reaches the API and comes back as a friendly message). Not yet verified: a real model call (needs the key).
+- 2026-11-18: Phase 5 done. `?mode=stage` makes all type 18% bigger (`data-stage` on `<html>`); `C` shows a cue card for the current step (`lib/cues.ts`, 52 cues from the speech script, tested: every step has one, no em dashes), `F` toggles full screen (`components/stage/StageTools.tsx`). The cue card is rendered into `<body>` because the player bar's backdrop blur traps fixed elements. Stepping through 13 steps over 3 screens made 0 network requests (stories work offline after load). Phase 9 (my part) done: the Questions slides of both decks now show `github.com/sindakhenine/mlcon` (instead of 'Link on my LinkedIn') and a 'Try it live' QR to `mlcon.vercel.app/sN?view=play` (`_build/make_qr.js`); decks rebuilt with notes, validate.py passes, rendered and checked; old decks in `_build/backup/`. `npm run stage-backup` builds and serves the site on the laptop (tested: owner code works, no external requests). Section 16 rewritten as the real talk-day checklist. Left for Sinda: add `ANTHROPIC_API_KEY` and run the cost test; one run-through and two timed rehearsals.
 
 ---
 
 ## 16. Talk-day checklist
 
+**The three keys (never share the first two):**
+- Your access code (`SITE_ACCESS_CODE`): opens everything, always.
+- Your admin password (`ADMIN_PASSWORD`): opens `/admin`.
+- The audience code: shown on `/admin` and `/stage/sN`; works only while Site open is on.
+
+**The day before:**
+1. If you want the real model: add `ANTHROPIC_API_KEY` in Vercel (Secret), push or redeploy, then on `/admin` switch Live AI on and try both "real Claude" buttons once. Look at "Live AI today" for the cost.
+2. Rehearse once with the clicker: `/s1?view=broken&mode=stage` and `/s2?view=broken&mode=stage`. Press `C` for the cue cards, `F` for full screen.
+3. Laptop backup (works without internet): in `dashboard/`, create `.env.local` with one line `SITE_ACCESS_CODE=<your code>`, then run `npm run stage-backup` and open http://localhost:3000. Play needs the internet; the stories do not.
+
 **One hour before:**
-1. Admin: Reset counters. Site open: on. Play open: off. Live AI: off. New access code.
-2. Open in browser tabs, in order: the story URLs from section 8, then the stage counter page.
-3. Load every tab once, so it works even if the wifi drops.
-4. Test the clicker in the browser (`→` moves one step).
-5. Phone hotspot ready as a backup network.
+1. `/admin`: Reset counters. Site open on (an audience code appears). Play open off. Live AI off. Vote: none.
+2. Browser tabs, in this order: `/s1?view=broken&mode=stage`, `/s1?view=fixed&mode=stage`, `/stage/s1` (for Session 2: the `/s2` versions and `/stage/s2`). Load each once.
+3. Test the clicker in the browser: `→` moves one step. `Cmd+Tab` switches between PowerPoint and the browser.
+4. Phone hotspot ready as a backup network. Admin page open on your phone.
 
-**At the Play moment:**
-1. Admin on your phone: Play open on, Live AI on (if the cost test was fine).
-2. Show the stage counter page with the QR code.
-3. During Q&A, read numbers from the counter: "143 of you broke the bot."
+**During the talk:**
+1. Exercises: on `/admin` choose the vote (S1: drain pump; S2: A, B, C, D one after the other). Results appear on `/stage/sN`.
+2. Play moment (last content slide or the Questions slide with the QR): Play open on. Optional: Live AI on, and a Spotlight mission.
+3. During Q&A, read the numbers on `/stage/sN`: "143 of you broke the bot", "412 attacks, 0 EUR paid".
 
-**After the talk:** Live AI off. Play stays open for the week if the cost is fine, otherwise off. After the conference: revoke the demo API key.
+**After the talk:** Kill switch (Play and Live AI off). Site open off, or press New for a fresh code. After the conference: delete the demo API key in the Anthropic Console.
 
 **If anything fails:** say "Let me show you on the slide instead", `Cmd+Tab` back to PowerPoint, and continue. The slides have the full story.
 

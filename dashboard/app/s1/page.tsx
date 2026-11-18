@@ -14,7 +14,7 @@ export default function Session1() {
         <Link href="/" className="text-sm text-brand">← Home</Link>
         <p className="font-mono text-xs uppercase tracking-widest text-bug">Session 1</p>
         <h1 className="text-xl font-semibold sm:text-2xl">Same model, same prompt, wrong answer</h1>
-        <p className="ml-auto hidden text-sm text-muted md:block">→ next · ← back · P play · R restart</p>
+        <p className="ml-auto hidden text-sm text-muted md:block">→ next · ← back · P play · R restart · C cues · F full screen</p>
       </header>
       <S1Page />
     </main>

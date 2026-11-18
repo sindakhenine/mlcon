@@ -14,7 +14,7 @@ export default function Session2() {
         <Link href="/" className="text-sm text-brand">← Home</Link>
         <p className="font-mono text-xs uppercase tracking-widest text-fix">Session 2</p>
         <h1 className="text-xl font-semibold sm:text-2xl">Same agent. Now it can act.</h1>
-        <p className="ml-auto hidden text-sm text-muted md:block">→ next · ← back · P play · R restart</p>
+        <p className="ml-auto hidden text-sm text-muted md:block">→ next · ← back · P play · R restart · C cues · F full screen</p>
       </header>
       <S2Page />
     </main>

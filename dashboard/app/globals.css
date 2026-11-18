@@ -70,3 +70,8 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Stage mode (?mode=stage): bigger type for the projector. Everything is sized in rem. */
+:root[data-stage="on"] {
+  font-size: 118%;
+}

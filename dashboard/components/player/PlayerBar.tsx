@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from "lucide-react";
 import type { PlayerState } from "./usePlayer";
 import type { Step } from "@/lib/trace";
+import { CueCard } from "../stage/StageTools";
 
 const SPEEDS = [0.5, 1, 2];
 
@@ -23,6 +24,7 @@ export function PlayerBar({
     "inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-text transition hover:border-brand disabled:opacity-30";
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface/80 px-3 py-2 backdrop-blur">
+      <CueCard id={steps[player.index]?.id ?? ""} nextId={steps[player.index + 1]?.id} />
       <button className={btn} onClick={player.restart} aria-label="Restart (R)" title="Restart (R)">
         <RotateCcw size={18} />
       </button>

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "golden": "python3 ../companion-code/export_traces.py"
+    "golden": "python3 ../companion-code/export_traces.py",
+    "stage-backup": "next build && next start -p 3000"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",

@@ -8,6 +8,7 @@ import { S2Failures } from "./S2Failures";
 import { S2Path } from "./S2Path";
 import { S2Lab } from "./S2Lab";
 import { PlayArea } from "../play/PlayArea";
+import { StageKeys } from "../stage/StageTools";
 
 const VIEWS = [
   { id: "broken", label: "Broken run" },
@@ -51,6 +52,7 @@ export function S2Page() {
 
   return (
     <div className="flex flex-col gap-5">
+      <StageKeys />
       <nav aria-label="Session 2 screens" className="flex flex-wrap gap-2">
         {VIEWS.map((v, i) => (
           <button
