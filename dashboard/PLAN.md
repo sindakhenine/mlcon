@@ -571,6 +571,7 @@ Add one line per finished task: date, what, anything surprising.
 - 2026-11-18: Sinda logged in to the live `/admin`: private code, admin password and database (redis) all show as set. Phase 7 complete. Next: phase 8 (live Claude) or phase 5 (stage mode).
 - 2026-11-18: Phase 8 code done, waiting for the key. Routes `/api/live/s1` (streams Claude's answer to the context the engine rebuilt on the server; browser text is never trusted, see `lib/liveInput.ts`) and `/api/live/s2` (manual agent loop in `lib/s2/liveAgent.ts`: Claude proposes, the same gateway decides, fake systems answer; strict tools; server caps 10 model turns and 14 tool calls even with Bound off; refusal stops the run). Guard `lib/live.ts`: site role + `ANTHROPIC_API_KEY` + Live AI switch + daily cap (crossing it turns Live AI off) + runs per person per day (owner 200). Model from `CLAUDE_MODEL`, default `claude-opus-5-5`, effort low, server-side refusal fallback (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`) on models that support it. Cost estimated from `usage`. Buttons 'Ask real Claude with this context' (S1) and 'Run this ticket with real Claude' (S2) appear only while Live AI is on. Admin shows key status, model, today's spend and runs. Tests: `tests/live.test.ts` runs the loop with a stand-in model (37 unit tests total); `tests/e2e_live.py` checks the guard with no key and with a fake key (error path reaches the API and comes back as a friendly message). Not yet verified: a real model call (needs the key).
 - 2026-11-18: Phase 5 done. `?mode=stage` makes all type 18% bigger (`data-stage` on `<html>`); `C` shows a cue card for the current step (`lib/cues.ts`, 52 cues from the speech script, tested: every step has one, no em dashes), `F` toggles full screen (`components/stage/StageTools.tsx`). The cue card is rendered into `<body>` because the player bar's backdrop blur traps fixed elements. Stepping through 13 steps over 3 screens made 0 network requests (stories work offline after load). Phase 9 (my part) done: the Questions slides of both decks now show `github.com/sindakhenine/mlcon` (instead of 'Link on my LinkedIn') and a 'Try it live' QR to `mlcon.vercel.app/sN?view=play` (`_build/make_qr.js`); decks rebuilt with notes, validate.py passes, rendered and checked; old decks in `_build/backup/`. `npm run stage-backup` builds and serves the site on the laptop (tested: owner code works, no external requests). Section 16 rewritten as the real talk-day checklist. Left for Sinda: add `ANTHROPIC_API_KEY` and run the cost test; one run-through and two timed rehearsals.
+- 2026-11-18: Talk date known: both talks are on 2026-11-19. Priority today: API key and one real test (optional), then rehearsal with stage mode and cue cards, then the talk-day checklist (section 16).
 
 ---
 
@@ -607,7 +608,7 @@ Add one line per finished task: date, what, anything surprising.
 
 | Decision | Default |
 |---|---|
-| Dates and times of the two talks | Unknown. Write them here, they decide how much of the plan to build |
+| Dates and times of the two talks | Both on 2026-11-19 (times not recorded yet) |
 | Repo name and public URL | Decided: `sindakhenine/mlcon`, https://mlcon.vercel.app |
 | Model for live AI | `claude-opus-5-5`, decide after the cost test |
 | Show attendee attacks on the projector | Only ones you pick in admin |
