@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronDown, Lightbulb, RotateCcw, Trophy } from "lucide-react";
+import { Check, ChevronDown, Eye, Lightbulb, MousePointerClick, RotateCcw, Sparkles, Trophy, Zap } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import type { Mission } from "@/lib/s1/lab";
 
@@ -21,9 +21,9 @@ export function Toggle({ label, does, on, onChange }: { label: string; does: str
         aria-hidden
       >
         <motion.span
-          layout
           className="absolute h-5 w-5 rounded-full bg-white shadow"
-          style={{ left: on ? 22 : 2 }}
+          initial={false}
+          animate={{ left: on ? 22 : 2 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />
       </span>
@@ -68,15 +68,103 @@ export function Segmented<T extends string>({
   );
 }
 
-export function Card({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
+/**
+ * "control": something the visitor changes (blue frame).
+ * "info": a read-only result (no frame, eye icon), so it never looks like a button.
+ */
+export function Card({
+  title,
+  children,
+  right,
+  variant = "control",
+}: {
+  title: string;
+  children: ReactNode;
+  right?: ReactNode;
+  variant?: "control" | "info";
+}) {
+  const info = variant === "info";
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
+    <section className={info ? "rounded-2xl bg-bg/70 p-4" : "rounded-2xl border border-brand/40 bg-surface p-4 shadow-lg"}>
       <div className="mb-3 flex items-center gap-2">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">{title}</h3>
+        {info && <Eye size={14} className="shrink-0 text-muted" />}
+        <h3 className={`text-sm font-semibold uppercase tracking-wider ${info ? "text-muted" : "text-brand"}`}>{title}</h3>
         <div className="ml-auto">{right}</div>
       </div>
       {children}
     </section>
+  );
+}
+
+/** Three steps at the top of Play, so a first-time visitor knows what to do. */
+export function PlayHowTo({ steps, note }: { steps: [string, string, string]; note: string }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-4">
+      <ol className="grid gap-3 sm:grid-cols-3">
+        {steps.map((s, i) => (
+          <li key={s} className="flex items-start gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand font-mono text-sm font-bold text-bg">
+              {i + 1}
+            </span>
+            <span className="text-sm leading-snug">{s}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-3 border-t border-line pt-2 text-xs text-muted">{note}</p>
+    </div>
+  );
+}
+
+/** Heading over each column: what you change (left) and what happens (right). */
+export function ColumnHead({ kind, changeKey }: { kind: "controls" | "result"; changeKey?: string }) {
+  const [first] = useState(changeKey);
+  if (kind === "controls")
+    return (
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 px-1">
+        <MousePointerClick size={18} className="text-brand" />
+        <h2 className="whitespace-nowrap text-base font-semibold">You change</h2>
+        <span className="text-sm text-muted">tap the switches, buttons and lists</span>
+      </div>
+    );
+  return (
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 px-1">
+      <Eye size={18} className="text-muted" />
+      <h2 className="whitespace-nowrap text-base font-semibold">What happens</h2>
+      <span className="text-sm text-muted">read only, updates by itself</span>
+      {changeKey !== undefined && changeKey !== first && (
+        <motion.span
+          key={changeKey}
+          initial={{ opacity: 1, scale: 1.2 }}
+          animate={{ opacity: 0.3, scale: 1 }}
+          transition={{ duration: 1.8 }}
+          className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-bg"
+        >
+          <Zap size={12} /> updated
+        </motion.span>
+      )}
+    </div>
+  );
+}
+
+/** Label for the two "models" in the result: A = instant simulation, B = real Claude. */
+export function ModelHead({ which, title, note }: { which: "sim" | "real"; title: string; note: string }) {
+  const sim = which === "sim";
+  return (
+    <div className="flex items-start gap-3">
+      <span
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${sim ? "bg-surface-2 text-text" : "bg-brand text-bg"}`}
+        aria-hidden
+      >
+        {sim ? <Zap size={16} /> : <Sparkles size={16} />}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold">
+          <span className="font-mono text-muted">{sim ? "A" : "B"} · </span>
+          {title}
+        </p>
+        <p className="text-xs leading-snug text-muted">{note}</p>
+      </div>
+    </div>
   );
 }
 

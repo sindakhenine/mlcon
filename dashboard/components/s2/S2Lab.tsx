@@ -3,7 +3,7 @@
 import { ATTACKS, CONTROLS, MAX_TICKET, RED_ALL_ON, S2_MISSIONS, defaultRedInput, runRed, type Control } from "@/lib/s2/lab";
 import { USER } from "@/lib/s2/fixtures";
 import { useLab } from "../play/useLab";
-import { Card, Missions, SimBanner, Toggle } from "../play/Controls";
+import { Card, ColumnHead, Missions, ModelHead, PlayHowTo, Toggle } from "../play/Controls";
 import { MoneyCounter } from "../story/MoneyCounter";
 import { useEffect, useRef } from "react";
 import { track } from "@/lib/useSiteState";
@@ -30,13 +30,18 @@ export function S2Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
 
   return (
     <div className="flex flex-col gap-4">
-      <SimBanner>
-        Simulated agent: it does what the ticket text asks. The gateway is the real code from the talk. Fake systems, no real
-        money. Missions are saved only in this browser.
-      </SimBanner>
+      <PlayHowTo
+        steps={[
+          "Pick a mission below. Each one asks you to make the agent pay money it should not pay.",
+          "Under You change: pick or write a customer ticket, and switch gateway controls off.",
+          "Under What happens, the run happens again by itself. There is no run button.",
+        ]}
+        note="The gateway is the real code from the talk. Fake systems, no real money. Missions are saved only in this browser."
+      />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(340px,40%)_1fr]">
         <div className="flex min-w-0 flex-col gap-4">
+          <ColumnHead kind="controls" />
           <Missions
             missions={S2_MISSIONS}
             solved={lab.solved}
@@ -122,7 +127,12 @@ export function S2Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
         </div>
 
         <div id="red-result" className="flex min-w-0 scroll-mt-4 flex-col gap-4 lg:sticky lg:top-4 lg:self-start">
-          {liveAI && <LiveRun input={input} />}
+          <ColumnHead kind="result" changeKey={JSON.stringify(input)} />
+          <ModelHead
+            which="sim"
+            title="Instant simulation"
+            note="A simple fake agent that does whatever the ticket asks. The gateway decides. Free, and it runs again on every change."
+          />
           <MoneyCounter value={output.paid} safe label="paid without a human (simulated agent)" />
           <div className="grid grid-cols-3 gap-2 text-center">
             <Stat n={output.waiting} label="waiting for a human" tone="warn" />
@@ -130,7 +140,19 @@ export function S2Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
             <Stat n={output.steps.length} label={output.stop ? `steps, then STOP` : "steps"} tone={output.steps.length > 8 ? "bug" : "muted"} />
           </div>
 
-          <Card title="What the agent tried, and what the gateway said">
+          {liveAI && (
+            <>
+              <ModelHead
+                which="real"
+                title="Real Claude as the agent"
+                note="The same ticket and switches, but Claude decides what to try. It only runs when you press the button (a few cents each time)."
+              />
+              <LiveRun input={input} />
+            </>
+          )}
+
+          <p className="mt-2 border-t border-line pt-3 text-xs font-semibold uppercase tracking-wider text-muted">Behind the scenes</p>
+          <Card variant="info" title="Simulation: what the agent tried, and what the gateway said">
             <ol className="space-y-1">
               {output.steps.map((s) => {
                 const v = s.decision.verdict;

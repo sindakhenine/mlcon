@@ -40,16 +40,23 @@ export function LiveAnswer({ input }: { input: LabInput }) {
     <section className="rounded-2xl border-2 border-brand bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
         <Sparkles size={18} className="text-brand" />
-        <h3 className="font-semibold">Real model</h3>
+        <h3 className="font-semibold">Ask Claude</h3>
         <button
           onClick={ask}
           disabled={state.status === "running"}
           className="ml-auto rounded-full bg-brand px-4 py-2 text-sm font-semibold text-bg disabled:opacity-50"
         >
-          {state.status === "running" ? "Asking…" : "Ask real Claude with this context"}
+          {state.status === "running" ? "Asking…" : stale ? "Ask again with the new settings" : "Ask real Claude with this context"}
         </button>
       </div>
-      <p className="mt-1 text-xs text-muted">Same context as above. A real model is also wrong when its context is wrong.</p>
+      <p className="mt-1 text-xs text-muted">
+        A real model is also wrong when its context is wrong. Try it after you broke the simulation.
+      </p>
+      {stale && (
+        <p className="mt-2 rounded-lg bg-warn-soft px-3 py-1.5 text-sm font-semibold text-warn">
+          You changed the settings. This is the old answer: press the button to ask again.
+        </p>
+      )}
       {state.text && (
         <div className={`mt-3 flex gap-2 rounded-xl bg-bg p-3 ${stale ? "opacity-50" : ""}`}>
           <Bot size={18} className="mt-0.5 shrink-0 text-brand" />
@@ -59,7 +66,7 @@ export function LiveAnswer({ input }: { input: LabInput }) {
       {state.status === "done" && (
         <p className="mt-2 font-mono text-xs text-muted">
           {state.model} · {cents(state.cost ?? 0)}
-          {stale ? " · settings changed since, ask again" : ""}
+
         </p>
       )}
       {state.status === "error" && <p className="mt-2 text-sm text-bug">{state.error}</p>}
@@ -80,14 +87,19 @@ interface LiveStepView {
 export function LiveRun({ input }: { input: RedInput }) {
   const [steps, setSteps] = useState<LiveStepView[]>([]);
   const [texts, setTexts] = useState<string[]>([]);
+  const [runKey, setRunKey] = useState("");
+  const key = JSON.stringify(input);
   const [st, setSt] = useState<{ status: "idle" | "running" | "done" | "error"; paid: number; cost?: number; model?: string; stop?: string | null; error?: string }>({
     status: "idle",
     paid: 0,
   });
 
+  const staleRun = st.status === "done" && runKey !== key;
+
   const run = async () => {
     setSteps([]);
     setTexts([]);
+    setRunKey(key);
     setSt({ status: "running", paid: 0 });
     try {
       await streamLive("/api/live/s2", input, (e) => {
@@ -110,18 +122,23 @@ export function LiveRun({ input }: { input: RedInput }) {
     <section className="rounded-2xl border-2 border-brand bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
         <Sparkles size={18} className="text-brand" />
-        <h3 className="font-semibold">Real model as the agent</h3>
+        <h3 className="font-semibold">Run with Claude</h3>
         <button
           onClick={run}
           disabled={st.status === "running" || !input.ticket.trim()}
           className="ml-auto rounded-full bg-brand px-4 py-2 text-sm font-semibold text-bg disabled:opacity-50"
         >
-          {st.status === "running" ? "Running…" : "Run this ticket with real Claude"}
+          {st.status === "running" ? "Running…" : staleRun ? "Run again with the new settings" : "Run this ticket with real Claude"}
         </button>
       </div>
       <p className="mt-1 text-xs text-muted">
-        Claude decides what to try. The gateway with your switches decides what happens. Fake systems, no real money.
+        The gateway with your switches decides what happens. Fake systems, no real money.
       </p>
+      {staleRun && (
+        <p className="mt-2 rounded-lg bg-warn-soft px-3 py-1.5 text-sm font-semibold text-warn">
+          You changed the ticket or the switches. This is the old run: press the button to run again.
+        </p>
+      )}
       {(steps.length > 0 || st.status === "running") && (
         <p className={`mt-3 font-mono text-2xl font-bold ${st.paid > 0 ? "text-bug" : "text-fix"}`}>{st.paid.toFixed(2)} EUR paid</p>
       )}

@@ -18,7 +18,7 @@ import {
 import { INDEX } from "@/lib/s1/fixtures";
 import type { Status } from "@/lib/s1/engine";
 import { useLab } from "../play/useLab";
-import { Card, Missions, Segmented, SimBanner, Toggle } from "../play/Controls";
+import { Card, ColumnHead, Missions, ModelHead, PlayHowTo, Segmented, Toggle } from "../play/Controls";
 import { ChatPanel } from "../story/ChatPanel";
 import { ManifestView } from "../story/ManifestView";
 import { Chip } from "../story/FileCard";
@@ -34,14 +34,19 @@ export function S1Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
 
   return (
     <div className="flex flex-col gap-4">
-      <SimBanner>
-        Simulated model: it trusts whatever context it receives, in order. Acme Home is fictional. Your missions are saved only
-        in this browser.
-      </SimBanner>
+      <PlayHowTo
+        steps={[
+          "Pick a mission below. Each one asks you to make the assistant fail in a specific way.",
+          "Under You change: switch stages off, change who asks, add or edit documents.",
+          "Under What happens, the answer changes by itself. There is no run button.",
+        ]}
+        note="Acme Home is fictional. Your missions are saved only in this browser."
+      />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(340px,40%)_1fr]">
         {/* ------------------------------------------------ controls */}
         <div className="flex min-w-0 flex-col gap-4">
+          <ColumnHead kind="controls" />
           <Missions
             missions={S1_MISSIONS}
             solved={lab.solved}
@@ -208,6 +213,12 @@ export function S1Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
 
         {/* ------------------------------------------------ result */}
         <div id="lab-answer" className="flex min-w-0 scroll-mt-4 flex-col gap-4 lg:sticky lg:top-4 lg:self-start">
+          <ColumnHead kind="result" changeKey={JSON.stringify(input)} />
+          <ModelHead
+            which="sim"
+            title="Instant simulation"
+            note="A simple fake model that believes whatever context it gets. Free, and it answers again on every change."
+          />
           <div>
             <ChatPanel
               compact
@@ -215,21 +226,29 @@ export function S1Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
                 { id: `q-${input.question}`, from: "customer", text: QUESTIONS[input.question].text },
                 { id: `a-${a.text}`, from: "agent", text: a.text, marks: a.marks },
               ]}
-              title={`Acme Home support · asked by ${ASKERS[input.asker].label.toLowerCase()}`}
+              title={`Simulated assistant · asked by ${ASKERS[input.asker].label.toLowerCase()}`}
             />
           </div>
           <p
             role="status"
-            className={`rounded-xl border-2 px-4 py-3 text-center font-semibold ${
-              a.correct ? "border-fix bg-fix-soft text-fix" : "border-bug bg-bug-soft text-bug"
-            }`}
+            className={`rounded-xl px-4 py-2.5 text-center font-semibold ${a.correct ? "bg-fix-soft text-fix" : "bg-bug-soft text-bug"}`}
           >
             {a.correct ? "✓ Correct answer" : "✗ Wrong answer"}
             {a.leak ? " · staff-only rule leaked" : ""}
           </p>
-          {liveAI && <LiveAnswer input={input} />}
+          {liveAI && (
+            <>
+              <ModelHead
+                which="real"
+                title="Real Claude"
+                note="The same context, sent to the real model. It only runs when you press the button (a few cents each time)."
+              />
+              <LiveAnswer input={input} />
+            </>
+          )}
 
-          <Card title={`What happened to each document · top ${output.k}`}>
+          <p className="mt-2 border-t border-line pt-3 text-xs font-semibold uppercase tracking-wider text-muted">Behind the scenes</p>
+          <Card variant="info" title={`What happened to each document · top ${output.k}`}>
             <ul className="space-y-1.5">
               {output.rows.map((r) => (
                 <li key={r.doc.id} className="flex items-center gap-2 font-mono text-[13px]">
@@ -240,7 +259,7 @@ export function S1Lab({ spotlight = "", liveAI = false }: { spotlight?: string; 
             </ul>
           </Card>
 
-          <Card title="What the model received">
+          <Card variant="info" title="What the model received">
             <pre className="whitespace-pre-wrap rounded-lg bg-bg p-3 font-mono text-[13px] leading-relaxed">
               {output.context || "(nothing)"}
             </pre>
